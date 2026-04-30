@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>未拂 | 测测你的灵魂香</title>
+    <meta name="description" content="8道题，找到属于你的那串合香珠">
+    <meta property="og:title" content="测测你的灵魂香 | 未拂">
+    <meta property="og:description" content="8道题，找到属于你的那串合香珠。前50名仅需9.9元体验你的专属合香珠！">
+    <meta property="og:image" content="https://waverart.cn/images/poster.jpg">
+    <meta property="og:url" content="https://waverart.cn">
+    <meta property="og:type" content="website">
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&family=ZCOOL+XiaoWei&display=swap');
@@ -232,11 +238,10 @@
         let answers = [];
         function startQuiz() { currentQuestion = 0; answers = []; renderQuestion(); showPage('quiz-page'); }
         function renderQuestion() {
-            const quizContent = document.getElementById('quiz-content');
             const q = questions[currentQuestion];
             document.getElementById('current-q').textContent = currentQuestion + 1;
             document.getElementById('progress-fill').style.width = ((currentQuestion + 1) / 8 * 100) + '%';
-            quizContent.innerHTML = '<div class="question-container active"><div class="question-text">' + q.q + '</div><div class="options">' + q.options.map((opt, i) => '<div class="option" onclick="selectOption(\'' + opt.type + '\', this)"><span class="option-letter">' + String.fromCharCode(65 + i) + '</span>' + opt.text + '</div>').join('') + '</div></div>';
+            document.getElementById('quiz-content').innerHTML = '<div class="question-container active"><div class="question-text">' + q.q + '</div><div class="options">' + q.options.map((opt, i) => '<div class="option" onclick="selectOption(\'' + opt.type + '\', this)"><span class="option-letter">' + String.fromCharCode(65 + i) + '</span>' + opt.text + '</div>').join('') + '</div></div>';
         }
         function selectOption(type, el) {
             document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
