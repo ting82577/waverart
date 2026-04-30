@@ -7,616 +7,89 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&family=ZCOOL+XiaoWei&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --bg-color: #F5F0EB;
-            --ink-color: #2C2C2C;
-            --light-ink: #5A5A5A;
-            --accent-red: #C4A4A4;
-            --accent-yellow: #D4C4A4;
-            --accent-green: #4A6B5A;
-            --accent-black: #3A3A3A;
+            --bg-color: #F5F0EB; --ink-color: #2C2C2C; --light-ink: #5A5A5A;
+            --accent-red: #C4A4A4; --accent-yellow: #D4C4A4; --accent-green: #4A6B5A; --accent-black: #3A3A3A;
             --border-color: rgba(44, 44, 44, 0.1);
         }
-        
-        body {
-            font-family: 'Noto Serif SC', 'ZCOOL XiaoWei', serif;
-            background-color: var(--bg-color);
-            color: var(--ink-color);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        .page {
-            display: none;
-            min-height: 100vh;
-            padding: 20px;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-        
-        .page.active {
-            display: flex;
-            flex-direction: column;
-            opacity: 1;
-        }
-        
-        #home-page {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: linear-gradient(180deg, var(--bg-color) 0%, #EDE8E3 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .ink-wash {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            opacity: 0.03;
-            background: radial-gradient(ellipse at 30% 20%, var(--ink-color) 0%, transparent 50%),
-                        radial-gradient(ellipse at 70% 80%, var(--ink-color) 0%, transparent 40%);
-            pointer-events: none;
-        }
-        
-        .home-content {
-            z-index: 1;
-            max-width: 320px;
-        }
-        
-        .logo-container {
-            margin-bottom: 40px;
-        }
-        
-        .logo-container img {
-            width: 100px;
-            height: auto;
-            opacity: 0.85;
-        }
-        
-        .brand-name {
-            font-family: 'ZCOOL XiaoWei', serif;
-            font-size: 42px;
-            letter-spacing: 12px;
-            margin: 20px 0 10px;
-            color: var(--ink-color);
-        }
-        
-        .brand-name-en {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 12px;
-            letter-spacing: 4px;
-            color: var(--light-ink);
-            text-transform: uppercase;
-        }
-        
-        .slogan {
-            font-size: 14px;
-            color: var(--light-ink);
-            margin: 30px 0 50px;
-            line-height: 1.8;
-            letter-spacing: 2px;
-        }
-        
-        .cta-button {
-            display: inline-block;
-            padding: 16px 48px;
-            border: 1px solid var(--ink-color);
-            background: transparent;
-            color: var(--ink-color);
-            font-family: 'Noto Serif SC', serif;
-            font-size: 15px;
-            letter-spacing: 3px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: var(--ink-color);
-            transition: left 0.3s ease;
-            z-index: -1;
-        }
-        
-        .cta-button:hover {
-            color: var(--bg-color);
-        }
-        
-        .cta-button:hover::before {
-            left: 0;
-        }
-        
-        .deco-line {
-            width: 60px;
-            height: 1px;
-            background: var(--ink-color);
-            margin: 40px auto;
-            opacity: 0.3;
-        }
-        
-        #quiz-page {
-            padding-top: 60px;
-        }
-        
-        .progress-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 20px;
-            background: var(--bg-color);
-            z-index: 100;
-        }
-        
-        .progress-text {
-            text-align: center;
-            font-size: 13px;
-            color: var(--light-ink);
-            letter-spacing: 2px;
-            margin-bottom: 12px;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 2px;
-            background: rgba(44, 44, 44, 0.1);
-            border-radius: 1px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: var(--ink-color);
-            transition: width 0.4s ease;
-        }
-        
-        .quiz-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 40px 0;
-        }
-        
-        .question-container {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .question-container.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .question-text {
-            font-size: 20px;
-            line-height: 1.8;
-            text-align: center;
-            margin-bottom: 50px;
-            letter-spacing: 1px;
-        }
-        
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            max-width: 320px;
-            margin: 0 auto;
-        }
-        
-        .option {
-            padding: 20px 24px;
-            border: 1px solid rgba(44, 44, 44, 0.15);
-            background: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 15px;
-            line-height: 1.6;
-            text-align: left;
-            letter-spacing: 1px;
-        }
-        
-        .option:hover {
-            border-color: var(--ink-color);
-            background: rgba(255, 255, 255, 0.8);
-        }
-        
-        .option.selected {
-            border-color: var(--ink-color);
-            background: var(--ink-color);
-            color: var(--bg-color);
-        }
-        
-        .option-letter {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            line-height: 24px;
-            text-align: center;
-            border: 1px solid currentColor;
-            border-radius: 50%;
-            margin-right: 12px;
-            font-size: 12px;
-            opacity: 0.7;
-        }
-        
-        #result-page {
-            padding: 0;
-            align-items: center;
-        }
-        
-        .result-header {
-            width: 100%;
-            padding: 40px 20px;
-            text-align: center;
-            background: linear-gradient(180deg, var(--bg-color) 0%, #EDE8E3 100%);
-        }
-        
-        .result-label {
-            font-size: 12px;
-            color: var(--light-ink);
-            letter-spacing: 3px;
-            margin-bottom: 16px;
-        }
-        
-        .result-title {
-            font-family: 'ZCOOL XiaoWei', serif;
-            font-size: 36px;
-            letter-spacing: 8px;
-            margin-bottom: 12px;
-        }
-        
-        .result-type {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            letter-spacing: 2px;
-            padding: 8px 20px;
-            border-radius: 20px;
-        }
-        
-        .result-type .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-        
-        .result-card {
-            width: 100%;
-            max-width: 400px;
-            padding: 30px 24px;
-            margin: -20px auto 0;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            position: relative;
-            z-index: 1;
-            overflow: hidden;
-        }
-        
-        .result-image {
-            width: 100%;
-            aspect-ratio: 3/4;
-            object-fit: cover;
-            object-position: center center;
-            border-radius: 4px;
-            margin-bottom: 24px;
-        }
-        
-        .result-desc {
-            font-size: 15px;
-            line-height: 2;
-            letter-spacing: 1px;
-            color: var(--ink-color);
-            margin-bottom: 30px;
-        }
-        
-        .result-section {
-            margin-bottom: 24px;
-        }
-        
-        .result-section-title {
-            font-size: 13px;
-            color: var(--light-ink);
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .result-ingredients, .result-effects {
-            font-size: 14px;
-            line-height: 1.8;
-            letter-spacing: 1px;
-        }
-        
-        .result-slogan {
-            text-align: center;
-            font-size: 14px;
-            color: var(--light-ink);
-            letter-spacing: 2px;
-            padding: 20px 0;
-            background: rgba(44, 44, 44, 0.02);
-            margin: 20px 0;
-            border-radius: 4px;
-            word-break: break-all;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-            padding: 24px;
-        }
-        
-        .btn {
-            flex: 1;
-            padding: 14px 20px;
-            border: 1px solid var(--ink-color);
-            background: transparent;
-            color: var(--ink-color);
-            font-family: 'Noto Serif SC', serif;
-            font-size: 14px;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn:hover {
-            background: var(--ink-color);
-            color: var(--bg-color);
-        }
-        
-        .btn-primary {
-            background: var(--ink-color);
-            color: var(--bg-color);
-        }
-        
-        .btn-primary:hover {
-            background: #1a1a1a;
-        }
-        
-        .bottom-guide {
-            width: 100%;
-            max-width: 400px;
-            padding: 30px 24px 50px;
-            text-align: center;
-        }
-        
-        .price-ladder {
-            background: white;
-            border-radius: 8px;
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-        }
-        
-        .price-title {
-            font-size: 13px;
-            color: var(--light-ink);
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-        }
-        
-        .price-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px dashed var(--border-color);
-            font-size: 14px;
-        }
-        
-        .price-item:last-child {
-            border-bottom: none;
-        }
-        
-        .price-item .tag {
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            letter-spacing: 1px;
-        }
-        
-        .tag-limited {
-            background: var(--accent-red);
-            color: white;
-        }
-        
-        .tag-hot {
-            background: rgba(196, 164, 164, 0.3);
-            color: var(--ink-color);
-        }
-        
-        .wechat-guide {
-            padding: 30px 24px;
-            background: linear-gradient(135deg, #f8f6f4 0%, #f0ece8 100%);
-            border-radius: 8px;
-            text-align: center;
-        }
-        
-        .wechat-guide-title {
-            font-size: 16px;
-            letter-spacing: 3px;
-            margin-bottom: 8px;
-        }
-        
-        .wechat-guide-desc {
-            font-size: 13px;
-            color: var(--light-ink);
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-        }
-        
-        .wechat-qr {
-            width: 240px;
-            height: 240px;
-            background: white;
-            margin: 0 auto 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px dashed var(--border-color);
-            border-radius: 8px;
-            color: var(--light-ink);
-            font-size: 12px;
-            letter-spacing: 1px;
-            overflow: hidden;
-        }
-        
-        .wechat-tip {
-            font-size: 12px;
-            color: var(--light-ink);
-            letter-spacing: 1px;
-        }
-        
-        .share-card {
-            position: fixed;
-            top: -9999px;
-            left: -9999px;
-            width: 375px;
-            padding: 40px 30px;
-            background: var(--bg-color);
-            text-align: center;
-        }
-        
-        .share-card-logo {
-            width: 60px;
-            height: auto;
-            margin-bottom: 16px;
-            opacity: 0.8;
-        }
-        
-        .share-card-brand {
-            font-family: 'ZCOOL XiaoWei', serif;
-            font-size: 24px;
-            letter-spacing: 6px;
-            margin-bottom: 30px;
-        }
-        
-        .share-card-result {
-            padding: 30px 20px;
-            margin-bottom: 24px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .share-card-color {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin: 0 auto 16px;
-        }
-        
-        .share-card-type {
-            font-size: 28px;
-            letter-spacing: 6px;
-            margin-bottom: 8px;
-        }
-        
-        .share-card-label {
-            font-size: 13px;
-            letter-spacing: 2px;
-            color: var(--light-ink);
-            margin-bottom: 16px;
-        }
-        
-        .share-card-slogan {
-            font-size: 14px;
-            line-height: 1.8;
-            color: var(--ink-color);
-            letter-spacing: 1px;
-        }
-        
-        .share-card-footer {
-            font-size: 11px;
-            color: var(--light-ink);
-            letter-spacing: 2px;
-        }
-        
-        .restart-btn {
-            display: block;
-            width: 100%;
-            max-width: 200px;
-            margin: 0 auto 20px;
-            padding: 12px 24px;
-            border: 1px solid var(--ink-color);
-            background: transparent;
-            color: var(--ink-color);
-            font-family: 'Noto Serif SC', serif;
-            font-size: 13px;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .restart-btn:hover {
-            background: var(--ink-color);
-            color: var(--bg-color);
-        }
-        
-        .toast {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 24px;
-            background: var(--ink-color);
-            color: var(--bg-color);
-            font-size: 13px;
-            letter-spacing: 1px;
-            border-radius: 4px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 1000;
-        }
-        
-        .toast.show {
-            opacity: 1;
-        }
-        
-        .brand-watermark {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            font-size: 10px;
-            color: var(--light-ink);
-            opacity: 0.4;
-            letter-spacing: 1px;
-        }
-        
-        @media (max-width: 380px) {
-            .brand-name {
-                font-size: 36px;
-                letter-spacing: 8px;
-            }
-            .question-text {
-                font-size: 18px;
-            }
-            .option {
-                padding: 16px 20px;
-                font-size: 14px;
-            }
-        }
+        body { font-family: 'Noto Serif SC', 'ZCOOL XiaoWei', serif; background-color: var(--bg-color); color: var(--ink-color); min-height: 100vh; overflow-x: hidden; }
+        .page { display: none; min-height: 100vh; padding: 20px; opacity: 0; transition: opacity 0.5s ease; }
+        .page.active { display: flex; flex-direction: column; opacity: 1; }
+        #home-page { justify-content: center; align-items: center; text-align: center; background: linear-gradient(180deg, var(--bg-color) 0%, #EDE8E3 100%); position: relative; overflow: hidden; }
+        .ink-wash { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0.03; background: radial-gradient(ellipse at 30% 20%, var(--ink-color) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, var(--ink-color) 0%, transparent 40%); pointer-events: none; }
+        .home-content { z-index: 1; max-width: 320px; }
+        .logo-container { margin-bottom: 40px; }
+        .logo-container img { width: 100px; height: auto; opacity: 0.85; }
+        .brand-name { font-family: 'ZCOOL XiaoWei', serif; font-size: 42px; letter-spacing: 12px; margin: 20px 0 10px; color: var(--ink-color); }
+        .brand-name-en { font-family: 'Noto Serif SC', serif; font-size: 12px; letter-spacing: 4px; color: var(--light-ink); text-transform: uppercase; }
+        .slogan { font-size: 14px; color: var(--light-ink); margin: 30px 0 50px; line-height: 1.8; letter-spacing: 2px; }
+        .cta-button { display: inline-block; padding: 16px 48px; border: 1px solid var(--ink-color); background: transparent; color: var(--ink-color); font-family: 'Noto Serif SC', serif; font-size: 15px; letter-spacing: 3px; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .cta-button::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: var(--ink-color); transition: left 0.3s ease; z-index: -1; }
+        .cta-button:hover { color: var(--bg-color); }
+        .cta-button:hover::before { left: 0; }
+        .deco-line { width: 60px; height: 1px; background: var(--ink-color); margin: 40px auto; opacity: 0.3; }
+        #quiz-page { padding-top: 60px; }
+        .progress-container { position: fixed; top: 0; left: 0; right: 0; padding: 20px; background: var(--bg-color); z-index: 100; }
+        .progress-text { text-align: center; font-size: 13px; color: var(--light-ink); letter-spacing: 2px; margin-bottom: 12px; }
+        .progress-bar { width: 100%; height: 2px; background: rgba(44, 44, 44, 0.1); border-radius: 1px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--ink-color); transition: width 0.4s ease; }
+        .quiz-content { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 0; }
+        .question-container { display: none; animation: fadeIn 0.5s ease; }
+        .question-container.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .question-text { font-size: 20px; line-height: 1.8; text-align: center; margin-bottom: 50px; letter-spacing: 1px; }
+        .options { display: flex; flex-direction: column; gap: 16px; max-width: 320px; margin: 0 auto; }
+        .option { padding: 20px 24px; border: 1px solid rgba(44, 44, 44, 0.15); background: rgba(255, 255, 255, 0.5); cursor: pointer; transition: all 0.3s ease; font-size: 15px; line-height: 1.6; text-align: left; letter-spacing: 1px; }
+        .option:hover { border-color: var(--ink-color); background: rgba(255, 255, 255, 0.8); }
+        .option.selected { border-color: var(--ink-color); background: var(--ink-color); color: var(--bg-color); }
+        .option-letter { display: inline-block; width: 24px; height: 24px; line-height: 24px; text-align: center; border: 1px solid currentColor; border-radius: 50%; margin-right: 12px; font-size: 12px; opacity: 0.7; }
+        #result-page { padding: 0; align-items: center; }
+        .result-header { width: 100%; padding: 40px 20px; text-align: center; background: linear-gradient(180deg, var(--bg-color) 0%, #EDE8E3 100%); }
+        .result-label { font-size: 12px; color: var(--light-ink); letter-spacing: 3px; margin-bottom: 16px; }
+        .result-title { font-family: 'ZCOOL XiaoWei', serif; font-size: 36px; letter-spacing: 8px; margin-bottom: 12px; }
+        .result-type { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; letter-spacing: 2px; padding: 8px 20px; border-radius: 20px; }
+        .result-type .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .result-card { width: 100%; max-width: 400px; padding: 30px 24px; margin: -20px auto 0; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); position: relative; z-index: 1; overflow: hidden; }
+        .result-image { width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: center center; border-radius: 4px; margin-bottom: 24px; }
+        .result-desc { font-size: 15px; line-height: 2; letter-spacing: 1px; color: var(--ink-color); margin-bottom: 30px; }
+        .result-section { margin-bottom: 24px; }
+        .result-section-title { font-size: 13px; color: var(--light-ink); letter-spacing: 2px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
+        .result-ingredients, .result-effects { font-size: 14px; line-height: 1.8; letter-spacing: 1px; }
+        .result-slogan { text-align: center; font-size: 14px; color: var(--light-ink); letter-spacing: 2px; padding: 20px 0; background: rgba(44, 44, 44, 0.02); margin: 20px 0; border-radius: 4px; word-break: break-all; }
+        .action-buttons { display: flex; gap: 12px; padding: 24px; }
+        .btn { flex: 1; padding: 14px 20px; border: 1px solid var(--ink-color); background: transparent; color: var(--ink-color); font-family: 'Noto Serif SC', serif; font-size: 14px; letter-spacing: 2px; cursor: pointer; transition: all 0.3s ease; }
+        .btn:hover { background: var(--ink-color); color: var(--bg-color); }
+        .btn-primary { background: var(--ink-color); color: var(--bg-color); }
+        .btn-primary:hover { background: #1a1a1a; }
+        .bottom-guide { width: 100%; max-width: 400px; padding: 30px 24px 50px; text-align: center; }
+        .price-ladder { background: white; border-radius: 8px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); }
+        .price-title { font-size: 13px; color: var(--light-ink); letter-spacing: 2px; margin-bottom: 20px; }
+        .price-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed var(--border-color); font-size: 14px; }
+        .price-item:last-child { border-bottom: none; }
+        .price-item .tag { padding: 4px 12px; border-radius: 12px; font-size: 12px; letter-spacing: 1px; }
+        .tag-limited { background: var(--accent-red); color: white; }
+        .tag-hot { background: rgba(196, 164, 164, 0.3); color: var(--ink-color); }
+        .wechat-guide { padding: 30px 24px; background: linear-gradient(135deg, #f8f6f4 0%, #f0ece8 100%); border-radius: 8px; text-align: center; }
+        .wechat-guide-title { font-size: 16px; letter-spacing: 3px; margin-bottom: 8px; }
+        .wechat-guide-desc { font-size: 13px; color: var(--light-ink); margin-bottom: 20px; letter-spacing: 1px; }
+        .wechat-qr { width: 240px; height: 240px; background: white; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border-color); border-radius: 8px; color: var(--light-ink); font-size: 12px; letter-spacing: 1px; overflow: hidden; }
+        .wechat-tip { font-size: 12px; color: var(--light-ink); letter-spacing: 1px; }
+        .share-card { position: fixed; top: -9999px; left: -9999px; width: 375px; padding: 40px 30px; background: var(--bg-color); text-align: center; }
+        .share-card-logo { width: 60px; height: auto; margin-bottom: 16px; opacity: 0.8; }
+        .share-card-brand { font-family: 'ZCOOL XiaoWei', serif; font-size: 24px; letter-spacing: 6px; margin-bottom: 30px; }
+        .share-card-result { padding: 30px 20px; margin-bottom: 24px; border: 1px solid var(--border-color); }
+        .share-card-color { width: 50px; height: 50px; border-radius: 50%; margin: 0 auto 16px; }
+        .share-card-type { font-size: 28px; letter-spacing: 6px; margin-bottom: 8px; }
+        .share-card-label { font-size: 13px; letter-spacing: 2px; color: var(--light-ink); margin-bottom: 16px; }
+        .share-card-slogan { font-size: 14px; line-height: 1.8; color: var(--ink-color); letter-spacing: 1px; }
+        .share-card-footer { font-size: 11px; color: var(--light-ink); letter-spacing: 2px; }
+        .restart-btn { display: block; width: 100%; max-width: 200px; margin: 0 auto 20px; padding: 12px 24px; border: 1px solid var(--ink-color); background: transparent; color: var(--ink-color); font-family: 'Noto Serif SC', serif; font-size: 13px; letter-spacing: 2px; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn:hover { background: var(--ink-color); color: var(--bg-color); }
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); padding: 12px 24px; background: var(--ink-color); color: var(--bg-color); font-size: 13px; letter-spacing: 1px; border-radius: 4px; opacity: 0; transition: opacity 0.3s ease; z-index: 1000; }
+        .toast.show { opacity: 1; }
+        .brand-watermark { position: fixed; bottom: 20px; right: 20px; font-size: 10px; color: var(--light-ink); opacity: 0.4; letter-spacing: 1px; }
+        @media (max-width: 380px) { .brand-name { font-size: 36px; letter-spacing: 8px; } .question-text { font-size: 18px; } .option { padding: 16px 20px; font-size: 14px; } }
     </style>
 </head>
 <body>
@@ -624,103 +97,70 @@
         <div class="ink-wash"></div>
         <div class="home-content">
             <div class="logo-container">
-                <img src="https://www.coze.cn/s/lIRnAVrIBEI/" alt="未拂品牌Logo">
+                <img src="images/logo.jpg" alt="未拂品牌Logo">
             </div>
             <div class="brand-name">未拂</div>
             <div class="brand-name-en">UnAver</div>
-            <div class="slogan">
-                是香气尚未抵达<br>
-                身心已然先觉
-            </div>
+            <div class="slogan">是香气尚未抵达<br>身心已然先觉</div>
             <div class="deco-line"></div>
             <button class="cta-button" onclick="startQuiz()">测测你的灵魂香</button>
         </div>
         <div class="brand-watermark">未拂 WAVER</div>
     </div>
-    
     <div id="quiz-page" class="page">
         <div class="progress-container">
             <div class="progress-text"><span id="current-q">1</span> / 8</div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill" style="width: 12.5%"></div>
-            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 12.5%"></div></div>
         </div>
         <div class="quiz-content" id="quiz-content"></div>
     </div>
-    
     <div id="result-page" class="page">
         <div class="result-header">
             <div class="result-label">你的灵魂香是</div>
             <div class="result-title" id="result-title"></div>
             <div class="result-type" id="result-type"></div>
         </div>
-        
         <div class="result-card">
             <img class="result-image" id="result-image" src="" alt="产品图">
             <div class="result-desc" id="result-desc"></div>
-            
             <div class="result-section">
                 <div class="result-section-title">成分</div>
                 <div class="result-ingredients" id="result-ingredients"></div>
             </div>
-            
             <div class="result-section">
                 <div class="result-section-title">功效</div>
                 <div class="result-effects" id="result-effects"></div>
             </div>
-            
             <div class="result-slogan" id="result-slogan"></div>
-            
             <button class="restart-btn" onclick="restartQuiz()">重新测试</button>
-            
             <div class="action-buttons">
                 <button class="btn" onclick="saveShareCard()">保存图片</button>
                 <button class="btn btn-primary" onclick="scrollToWechat()">加微信领取</button>
             </div>
         </div>
-        
         <div class="bottom-guide" id="bottom-guide">
             <div class="price-ladder">
                 <div class="price-title">限量体验价</div>
-                <div class="price-item">
-                    <span>前50名</span>
-                    <span><strong>9.9</strong> 元</span>
-                    <span class="tag tag-limited">限量</span>
-                </div>
-                <div class="price-item">
-                    <span>51-100名</span>
-                    <span><strong>19.9</strong> 元</span>
-                    <span class="tag tag-hot">抢手</span>
-                </div>
-                <div class="price-item">
-                    <span>101-200名</span>
-                    <span><strong>29.9</strong> 元</span>
-                    <span></span>
-                </div>
-                <div class="price-item">
-                    <span>正价</span>
-                    <span><strong>69</strong> 元</span>
-                    <span></span>
-                </div>
+                <div class="price-item"><span>前50名</span><span><strong>9.9</strong> 元</span><span class="tag tag-limited">限量</span></div>
+                <div class="price-item"><span>51-100名</span><span><strong>19.9</strong> 元</span><span class="tag tag-hot">抢手</span></div>
+                <div class="price-item"><span>101-200名</span><span><strong>29.9</strong> 元</span><span></span></div>
+                <div class="price-item"><span>正价</span><span><strong>69</strong> 元</span><span></span></div>
             </div>
-            
             <div class="wechat-guide">
                 <div class="wechat-guide-title">扫码加微信</div>
                 <div class="wechat-guide-desc">领取你的灵魂香</div>
                 <div style="display:flex;justify-content:center;">
                     <div class="wechat-qr">
-                        <img src="https://www.coze.cn/s/pZxQbzw8n64/" alt="微信二维码" style="width:100%;height:100%;object-fit:contain;border-radius:8px;">
+                        <img src="images/qrcode.jpg" alt="微信二维码" style="width:100%;height:100%;object-fit:contain;border-radius:8px;">
                     </div>
                 </div>
                 <div class="wechat-tip">长按识别二维码</div>
             </div>
         </div>
-        
         <div class="brand-watermark">未拂 WAVER</div>
     </div>
-    
     <div class="share-card" id="share-card">
-        <img class="share-card-logo" src="https://www.coze.cn/s/lIRnAVrIBEI/" alt="未拂">
+        <img class="share-card-logo" src="images/logo.jpg" alt="未拂">
         <div class="share-card-brand">未拂</div>
         <div class="share-card-result">
             <div class="share-card-color" id="share-color"></div>
@@ -730,264 +170,115 @@
         </div>
         <div class="share-card-footer">是香气尚未抵达 身心已然先觉</div>
     </div>
-    
     <div class="toast" id="toast"></div>
-    
     <script>
         const questions = [
-            {
-                q: "半夜三点醒了睡不着，你？",
-                options: [
-                    { text: "翻个身，给自己掖好被子，\"没事，再睡会儿\"", type: "A" },
-                    { text: "开个小灯，放点轻音乐，反正醒了不如享受一下", type: "B" },
-                    { text: "脑子开始放电影，突然想明白白天没想通的事", type: "C" },
-                    { text: "干脆起来，夜深人静效率最高", type: "D" }
-                ]
-            },
-            {
-                q: "办公室空调开太低，你第一反应？",
-                options: [
-                    { text: "默默从抽屉掏出一条披肩，我永远有Plan B", type: "A" },
-                    { text: "闻闻自己手腕上的香，\"至少我闻着是暖的\"", type: "B" },
-                    { text: "开始走神……冷空气分子是怎么运动的来着", type: "C" },
-                    { text: "起身关小，或者直接说\"能不能调一下\"", type: "D" }
-                ]
-            },
-            {
-                q: "相亲/聚会社恐发作，你怎么活下来？",
-                options: [
-                    { text: "找角落坐下，默默照顾全场人的杯子和纸巾", type: "A" },
-                    { text: "低头闻袖口，\"还好出门前熏了香，给自己一个结界\"", type: "B" },
-                    { text: "观察每个人，内心已经写完一部小说", type: "C" },
-                    { text: "社交？不存在的，我能不去就不去", type: "D" }
-                ]
-            },
-            {
-                q: "老天爷说可以送你一个天赋，选？",
-                options: [
-                    { text: "体温永远刚好，拥抱的时候谁都觉得暖", type: "A" },
-                    { text: "永远能闻到世界上最好闻的味道", type: "B" },
-                    { text: "做的梦都能记住，而且能控制剧情", type: "C" },
-                    { text: "脑子永远清醒，一秒看穿所有套路", type: "D" }
-                ]
-            },
-            {
-                q: "古代你想活成谁？",
-                options: [
-                    { text: "隐居山间的大夫，十里八乡都来找我，但不图名", type: "A" },
-                    { text: "皇宫里最会享乐的妃子，把日子过成诗", type: "B" },
-                    { text: "住在湖边的小巫，白天采药晚上观星", type: "C" },
-                    { text: "背剑走江湖的独行侠，谁也别管我", type: "D" }
-                ]
-            },
-            {
-                q: "选一种动物当你灵宠？",
-                options: [
-                    { text: "羊驼——毛茸茸的，看着就暖", type: "A" },
-                    { text: "白孔雀——优雅，还自带氛围感", type: "B" },
-                    { text: "猫头鹰——夜间生物，眼神很深", type: "C" },
-                    { text: "猎豹——快、准、不废话", type: "D" }
-                ]
-            },
-            {
-                q: "你手机相册里最多的是？",
-                options: [
-                    { text: "给别人拍的照片，自己很少出镜", type: "A" },
-                    { text: "氛围感大片，咖啡、花、光影……生活要好看", type: "B" },
-                    { text: "截图，各种奇奇怪怪的想法和灵感", type: "C" },
-                    { text: "工作相关，相册就是另一个文件夹", type: "D" }
-                ]
-            },
-            {
-                q: "下辈子不想当人了，当什么？",
-                options: [
-                    { text: "一棵老树，谁路过都能靠一靠", type: "A" },
-                    { text: "一缕香，飘过就让人心情变好", type: "B" },
-                    { text: "一阵雾，时有时无，谁也抓不住", type: "C" },
-                    { text: "一阵风，来去自由，什么都不留", type: "D" }
-                ]
-            }
+            { q: "半夜三点醒了睡不着，你？", options: [
+                { text: "翻个身，给自己掖好被子，\"没事，再睡会儿\"", type: "A" },
+                { text: "开个小灯，放点轻音乐，反正醒了不如享受一下", type: "B" },
+                { text: "脑子开始放电影，突然想明白白天没想通的事", type: "C" },
+                { text: "干脆起来，夜深人静效率最高", type: "D" }
+            ]},
+            { q: "办公室空调开太低，你第一反应？", options: [
+                { text: "默默从抽屉掏出一条披肩，我永远有Plan B", type: "A" },
+                { text: "闻闻自己手腕上的香，\"至少我闻着是暖的\"", type: "B" },
+                { text: "开始走神……冷空气分子是怎么运动的来着", type: "C" },
+                { text: "起身关小，或者直接说\"能不能调一下\"", type: "D" }
+            ]},
+            { q: "相亲/聚会社恐发作，你怎么活下来？", options: [
+                { text: "找角落坐下，默默照顾全场人的杯子和纸巾", type: "A" },
+                { text: "低头闻袖口，\"还好出门前熏了香，给自己一个结界\"", type: "B" },
+                { text: "观察每个人，内心已经写完一部小说", type: "C" },
+                { text: "社交？不存在的，我能不去就不去", type: "D" }
+            ]},
+            { q: "老天爷说可以送你一个天赋，选？", options: [
+                { text: "体温永远刚好，拥抱的时候谁都觉得暖", type: "A" },
+                { text: "永远能闻到世界上最好闻的味道", type: "B" },
+                { text: "做的梦都能记住，而且能控制剧情", type: "C" },
+                { text: "脑子永远清醒，一秒看穿所有套路", type: "D" }
+            ]},
+            { q: "古代你想活成谁？", options: [
+                { text: "隐居山间的大夫，十里八乡都来找我，但不图名", type: "A" },
+                { text: "皇宫里最会享乐的妃子，把日子过成诗", type: "B" },
+                { text: "住在湖边的小巫，白天采药晚上观星", type: "C" },
+                { text: "背剑走江湖的独行侠，谁也别管我", type: "D" }
+            ]},
+            { q: "选一种动物当你灵宠？", options: [
+                { text: "羊驼——毛茸茸的，看着就暖", type: "A" },
+                { text: "白孔雀——优雅，还自带氛围感", type: "B" },
+                { text: "猫头鹰——夜间生物，眼神很深", type: "C" },
+                { text: "猎豹——快、准、不废话", type: "D" }
+            ]},
+            { q: "你手机相册里最多的是？", options: [
+                { text: "给别人拍的照片，自己很少出镜", type: "A" },
+                { text: "氛围感大片，咖啡、花、光影……生活要好看", type: "B" },
+                { text: "截图，各种奇奇怪怪的想法和灵感", type: "C" },
+                { text: "工作相关，相册就是另一个文件夹", type: "D" }
+            ]},
+            { q: "下辈子不想当人了，当什么？", options: [
+                { text: "一棵老树，谁路过都能靠一靠", type: "A" },
+                { text: "一缕香，飘过就让人心情变好", type: "B" },
+                { text: "一阵雾，时有时无，谁也抓不住", type: "C" },
+                { text: "一阵风，来去自由，什么都不留", type: "D" }
+            ]}
         ];
-        
         const results = {
-            A: {
-                name: "亳芍凝香",
-                type: "暖系·温润型",
-                color: "#C4A4A4",
-                cssColor: "var(--accent-red)",
-                image: "https://www.coze.cn/s/gXwwPGfysoQ/",
-                desc: "你是那种不用说话就能让人安心的存在。像一味慢慢熬的温补方，不张扬，但走进你生活的人都会被悄悄滋养。你的温柔不是软弱，是一种不动声色的力量。戴上它，是手腕上一抹沉静的红——不抢眼，但别人一定会注意到。搭浅色系衣服特别好看，白色、米色、浅灰都是它的主场。",
-                ingredients: "檀香、芍药、丁香、香茅、蕲艾、当归",
-                effects: "温养安神、养血舒络、清心祛浊",
-                slogan: "温养安神，你的灵魂香"
-            },
-            B: {
-                name: "鹅梨帐中香",
-                type: "柔系·浪漫型",
-                color: "#D4C4A4",
-                cssColor: "var(--accent-yellow)",
-                image: "https://www.coze.cn/s/uJhMT5V8HBo/",
-                desc: "你有一种让人舒服的天赋——不是讨好，而是真的懂得生活的质感。你知道好闻的味道能让心情好起来，知道仪式感不是矫情而是对自己的善待。戴上它，像手腕上住了一小片黄昏。低饱和的暖黄，跟大地色系、奶茶色穿搭是天生一对，温柔的人就该配温柔的颜色。",
-                ingredients: "沉香、檀香、乳香、甲香、鹅梨等",
-                effects: "安神助眠、放松神志、舒缓心情、开窍醒神，几乎没有药味，比较好闻",
-                slogan: "安神舒心，淡淡果香，像你一样让人想靠近"
-            },
-            C: {
-                name: "古方梦灵",
-                type: "静系·灵性型",
-                color: "#4A6B5A",
-                cssColor: "var(--accent-green)",
-                image: "https://www.coze.cn/s/qe1_ugMysw4/",
-                desc: "你的世界比别人大一点。别人看到的是眼前，你还能感受到背后那层没说出口的。直觉是你的超能力，梦是你的另一个家。戴上它，是一抹很深的绿——像走进一片老林子，安静、沉定、有故事。跟棉麻、深色系穿搭搭在一起，有一种\"这个人文气很重\"的氛围。",
-                ingredients: "薰衣草、沉香、檀香、丁香、夜交藤、大麦叶粉、远志、茯神等",
-                effects: "疏肝理气、芳香辟秽、和中止痛、安神定志",
-                slogan: "安神定志，助你入梦也助你清醒"
-            },
-            D: {
-                name: "無上清凉香",
-                type: "酷系·利落型",
-                color: "#3A3A3A",
-                cssColor: "var(--accent-black)",
-                image: "https://www.coze.cn/s/09BGnvRBhlo/",
-                desc: "你不拖泥带水，不自我内耗，该断就断该走就走。不是冷，是你太清楚什么值得什么不值得。酷不是因为不在意，是因为想得太明白。戴上它，黑色就是态度。不用配，什么都配。但最绝的是搭一身黑白灰或者皮衣——别人是戴手串，你是戴盔甲。",
-                ingredients: "檀香、沉香、冰片、薄荷、乳香、安息香、白芷等",
-                effects: "清凉消暑、提神醒脑，驱蚊避秽",
-                slogan: "提神醒脑，一闻就清醒，像你一样干脆"
-            }
+            A: { name: "亳芍凝香", type: "暖系·温润型", color: "#C4A4A4", image: "images/product_1.jpg", desc: "你是那种不用说话就能让人安心的存在。像一味慢慢熬的温补方，不张扬，但走进你生活的人都会被悄悄滋养。你的温柔不是软弱，是一种不动声色的力量。戴上它，是手腕上一抹沉静的红——不抢眼，但别人一定会注意到。搭浅色系衣服特别好看，白色、米色、浅灰都是它的主场。", ingredients: "檀香、芍药、丁香、香茅、蕲艾、当归", effects: "温养安神、养血舒络、清心祛浊", slogan: "温养安神，你的灵魂香" },
+            B: { name: "鹅梨帐中香", type: "柔系·浪漫型", color: "#D4C4A4", image: "images/product_2.jpg", desc: "你有一种让人舒服的天赋——不是讨好，而是真的懂得生活的质感。你知道好闻的味道能让心情好起来，知道仪式感不是矫情而是对自己的善待。戴上它，像手腕上住了一小片黄昏。低饱和的暖黄，跟大地色系、奶茶色穿搭是天生一对，温柔的人就该配温柔的颜色。", ingredients: "沉香、檀香、乳香、甲香、鹅梨等", effects: "安神助眠、放松神志、舒缓心情、开窍醒神，几乎没有药味，比较好闻", slogan: "安神舒心，淡淡果香，像你一样让人想靠近" },
+            C: { name: "古方梦灵", type: "静系·灵性型", color: "#4A6B5A", image: "images/product_3.jpg", desc: "你的世界比别人大一点。别人看到的是眼前，你还能感受到背后那层没说出口的。直觉是你的超能力，梦是你的另一个家。戴上它，是一抹很深的绿——像走进一片老林子，安静、沉定、有故事。跟棉麻、深色系穿搭搭在一起，有一种\"这个人文气很重\"的氛围。", ingredients: "薰衣草、沉香、檀香、丁香、夜交藤、大麦叶粉、远志、茯神等", effects: "疏肝理气、芳香辟秽、和中止痛、安神定志", slogan: "安神定志，助你入梦也助你清醒" },
+            D: { name: "無上清凉香", type: "酷系·利落型", color: "#3A3A3A", image: "images/product_4.jpg", desc: "你不拖泥带水，不自我内耗，该断就断该走就走。不是冷，是你太清楚什么值得什么不值得。酷不是因为不在意，是因为想得太明白。戴上它，黑色就是态度。不用配，什么都配。但最绝的是搭一身黑白灰或者皮衣——别人是戴手串，你是戴盔甲。", ingredients: "檀香、沉香、冰片、薄荷、乳香、安息香、白芷等", effects: "清凉消暑、提神醒脑，驱蚊避秽", slogan: "提神醒脑，一闻就清醒，像你一样干脆" }
         };
-        
         let currentQuestion = 0;
         let answers = [];
-        
-        function startQuiz() {
-            currentQuestion = 0;
-            answers = [];
-            renderQuestion();
-            showPage('quiz-page');
-        }
-        
+        function startQuiz() { currentQuestion = 0; answers = []; renderQuestion(); showPage('quiz-page'); }
         function renderQuestion() {
             const quizContent = document.getElementById('quiz-content');
             const q = questions[currentQuestion];
-            
             document.getElementById('current-q').textContent = currentQuestion + 1;
             document.getElementById('progress-fill').style.width = ((currentQuestion + 1) / 8 * 100) + '%';
-            
-            quizContent.innerHTML = `
-                <div class="question-container active">
-                    <div class="question-text">${q.q}</div>
-                    <div class="options">
-                        ${q.options.map((opt, i) => `
-                            <div class="option" onclick="selectOption('${opt.type}', this)">
-                                <span class="option-letter">${String.fromCharCode(65 + i)}</span>
-                                ${opt.text}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
+            quizContent.innerHTML = '<div class="question-container active"><div class="question-text">' + q.q + '</div><div class="options">' + q.options.map((opt, i) => '<div class="option" onclick="selectOption(\'' + opt.type + '\', this)"><span class="option-letter">' + String.fromCharCode(65 + i) + '</span>' + opt.text + '</div>').join('') + '</div></div>';
         }
-        
         function selectOption(type, el) {
             document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
             el.classList.add('selected');
             answers[currentQuestion] = type;
-            
-            setTimeout(() => {
-                if (currentQuestion < 7) {
-                    currentQuestion++;
-                    renderQuestion();
-                } else {
-                    showResult();
-                }
-            }, 400);
+            setTimeout(() => { if (currentQuestion < 7) { currentQuestion++; renderQuestion(); } else { showResult(); } }, 400);
         }
-        
         function showResult() {
             const counts = { A: 0, B: 0, C: 0, D: 0 };
             answers.forEach(a => counts[a]++);
-            
-            let maxType = 'A';
-            let maxCount = counts['A'];
-            
-            for (let type in counts) {
-                if (counts[type] > maxCount) {
-                    maxCount = counts[type];
-                    maxType = type;
-                }
-            }
-            
-            if (counts[maxType] === counts[answers[3]] && maxType !== answers[3]) {
-                maxType = answers[3];
-            }
-            
+            let maxType = 'A', maxCount = counts['A'];
+            for (let type in counts) { if (counts[type] > maxCount) { maxCount = counts[type]; maxType = type; } }
+            if (counts[maxType] === counts[answers[3]] && maxType !== answers[3]) { maxType = answers[3]; }
             const result = results[maxType];
-            
             document.getElementById('result-title').textContent = result.name;
-            document.getElementById('result-type').innerHTML = `
-                <span class="dot" style="background: ${result.color}"></span>
-                ${result.type}
-            `;
+            document.getElementById('result-type').innerHTML = '<span class="dot" style="background: ' + result.color + '"></span>' + result.type;
             document.getElementById('result-image').src = result.image;
             document.getElementById('result-desc').textContent = result.desc;
             document.getElementById('result-ingredients').textContent = result.ingredients;
             document.getElementById('result-effects').textContent = result.effects;
             document.getElementById('result-slogan').textContent = '→ ' + result.slogan;
-            
             document.getElementById('share-color').style.background = result.color;
             document.getElementById('share-type').textContent = result.name;
             document.getElementById('share-label').textContent = result.type;
             document.getElementById('share-slogan').textContent = '→ ' + result.slogan;
-            
             showPage('result-page');
         }
-        
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-        }
-        
-        function restartQuiz() {
-            startQuiz();
-        }
-        
-        function scrollToWechat() {
-            document.getElementById('bottom-guide').scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-        
+        function showPage(pageId) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(pageId).classList.add('active'); }
+        function restartQuiz() { startQuiz(); }
+        function scrollToWechat() { document.getElementById('bottom-guide').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
         async function saveShareCard() {
             showToast('正在生成图片...');
-            const shareCard = document.getElementById('share-card');
-            
             try {
-                const canvas = await html2canvas(shareCard, {
-                    scale: 2,
-                    backgroundColor: '#F5F0EB',
-                    useCORS: true,
-                    allowTaint: true
-                });
-                
+                const canvas = await html2canvas(document.getElementById('share-card'), { scale: 2, backgroundColor: '#F5F0EB', useCORS: true, allowTaint: true });
                 const link = document.createElement('a');
                 link.download = '我的灵魂香-未拂.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                
                 showToast('图片已保存');
-            } catch (e) {
-                console.error(e);
-                showToast('生成失败，请重试');
-            }
+            } catch (e) { console.error(e); showToast('生成失败，请重试'); }
         }
-        
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
-        }
+        function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000); }
     </script>
 </body>
 </html>
