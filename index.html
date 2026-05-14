@@ -387,19 +387,19 @@
         
         .action-buttons {
             display: flex;
-            gap: 12px;
-            padding: 24px;
+            gap: 10px;
+            padding: 0 24px 24px;
         }
         
         .btn {
             flex: 1;
-            padding: 14px 20px;
+            padding: 12px 16px;
             border: 1px solid var(--ink-color);
             background: transparent;
             color: var(--ink-color);
             font-family: 'Noto Serif SC', serif;
-            font-size: 14px;
-            letter-spacing: 2px;
+            font-size: 12px;
+            letter-spacing: 1px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -523,54 +523,83 @@
         }
         
         .share-card-logo {
-            width: 60px;
+            width: 50px;
             height: auto;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
             opacity: 0.8;
+            border-radius: 50%;
         }
         
         .share-card-brand {
             font-family: 'ZCOOL XiaoWei', serif;
-            font-size: 24px;
-            letter-spacing: 6px;
-            margin-bottom: 30px;
+            font-size: 18px;
+            letter-spacing: 4px;
+            margin-bottom: 4px;
+        }
+        
+        .share-card-subtitle {
+            font-size: 10px;
+            color: var(--light-ink);
+            letter-spacing: 2px;
+            margin-bottom: 24px;
         }
         
         .share-card-result {
-            padding: 30px 20px;
-            margin-bottom: 24px;
+            padding: 24px 20px;
+            margin-bottom: 20px;
             border: 1px solid var(--border-color);
         }
         
         .share-card-color {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            margin: 0 auto 16px;
+            margin: 0 auto 12px;
         }
         
         .share-card-type {
             font-size: 28px;
             letter-spacing: 6px;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
         
         .share-card-label {
-            font-size: 13px;
+            font-size: 12px;
             letter-spacing: 2px;
             color: var(--light-ink);
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
         
         .share-card-slogan {
-            font-size: 14px;
+            font-size: 13px;
             line-height: 1.8;
             color: var(--ink-color);
             letter-spacing: 1px;
         }
         
+        .share-card-qr {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 6px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .share-card-qr img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .share-card-scan {
+            font-size: 10px;
+            color: var(--light-ink);
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        
         .share-card-footer {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--light-ink);
             letter-spacing: 2px;
         }
@@ -640,6 +669,11 @@
                 padding: 16px 20px;
                 font-size: 14px;
             }
+            
+            .btn {
+                font-size: 11px;
+                padding: 10px 12px;
+            }
         }
     </style>
 </head>
@@ -700,6 +734,7 @@
             
             <div class="action-buttons">
                 <button class="btn" onclick="saveShareCard()">保存图片</button>
+                <button class="btn" onclick="copyLink()">复制链接</button>
                 <button class="btn btn-primary" onclick="scrollToWechat()">加微信领取</button>
             </div>
         </div>
@@ -747,12 +782,17 @@
     <div class="share-card" id="share-card">
         <img class="share-card-logo" src="images/logo.jpg" alt="未拂">
         <div class="share-card-brand">未拂</div>
+        <div class="share-card-subtitle">测测你的灵魂香</div>
         <div class="share-card-result">
             <div class="share-card-color" id="share-color"></div>
             <div class="share-card-type" id="share-type"></div>
             <div class="share-card-label" id="share-label"></div>
             <div class="share-card-slogan" id="share-slogan"></div>
         </div>
+        <div class="share-card-qr">
+            <img src="images/qrcode.jpg" alt="扫码测测">
+        </div>
+        <div class="share-card-scan">扫码测测你的灵魂香</div>
         <div class="share-card-footer">是香气尚未抵达 身心已然先觉</div>
     </div>
     
@@ -941,7 +981,6 @@
                 }
             }
             
-            // 平局时Q4(天赋题)优先
             if (counts[maxType] === counts[answers[3]] && maxType !== answers[3]) {
                 maxType = answers[3];
             }
@@ -981,6 +1020,23 @@
                 behavior: 'smooth',
                 block: 'start'
             });
+        }
+        
+        function copyLink() {
+            const url = 'https://waverart.cn';
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => {
+                    showToast('链接已复制');
+                });
+            } else {
+                const input = document.createElement('input');
+                input.value = url;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast('链接已复制');
+            }
         }
         
         async function saveShareCard() {
